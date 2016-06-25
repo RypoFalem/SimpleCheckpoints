@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -19,6 +20,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
+
 
 public class SimpleCheckpointsPlugin extends JavaPlugin implements Listener, CommandExecutor{
 	HashMap<UUID, Location> playerCheckpoints;
@@ -55,13 +57,18 @@ public class SimpleCheckpointsPlugin extends JavaPlugin implements Listener, Com
 	@EventHandler (priority = EventPriority.LOW, ignoreCancelled=false)
 	public void onEnderPearl(PlayerInteractEvent event){
 		if(world == null || world != event.getPlayer().getWorld()) return;
-		if(event.getItem().getType() != Material.ENDER_PEARL) return;
+		if(event.getItem() == null || event.getItem().getType() != Material.ENDER_PEARL) return;
 		event.setCancelled(true);
 		Player player = event.getPlayer();
 		player.updateInventory();
 		if(playerCheckpoints.containsKey(player.getUniqueId())){
-			player.setFallDistance(0);
-			player.teleport(playerCheckpoints.get(player.getUniqueId()));
+			Location checkpoint = playerCheckpoints.get(player.getUniqueId());
+			if(checkpoint.getBlock().getType() == Material.AIR && checkpoint.clone().add(0,1,0).getBlock().getType() == Material.AIR){
+				player.setFallDistance(0);
+				player.teleport(playerCheckpoints.get(player.getUniqueId()));
+			}else{
+				player.sendTitle(ChatColor.DARK_RED + "Invalid Checkpoint!", ChatColor.RED + "It needs empty space above it!");
+			}
 		}
 	}
 	
@@ -72,8 +79,13 @@ public class SimpleCheckpointsPlugin extends JavaPlugin implements Listener, Com
 	}
 	
 	void setPoint(UUID uid, Location location){
-		playerCheckpoints.put(uid, location);
-		Bukkit.getPlayer(uid).sendTitle("", "Checkpoint set");
+		if(location.clone().add(0,1,0).getBlock().getType() == Material.AIR){
+			playerCheckpoints.put(uid, location);
+			Bukkit.getPlayer(uid).sendTitle("", "Checkpoint set");
+		}else{
+			Bukkit.getPlayer(uid).sendTitle(ChatColor.DARK_RED + "Invalid Checkpoint!", ChatColor.RED + "It needs empty space above it!");
+		}
+		
 	}
 	
 	@Override
@@ -88,7 +100,6 @@ public class SimpleCheckpointsPlugin extends JavaPlugin implements Listener, Com
 			sender.sendMessage("SimpleCheckpoints is now using this world!");
 			return true;
 		}
-		
 		return false;
 	}
 	
