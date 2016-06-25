@@ -18,6 +18,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
 
 public class SimpleCheckpointsPlugin extends JavaPlugin implements Listener, CommandExecutor{
 	HashMap<UUID, Location> playerCheckpoints;
@@ -32,6 +33,9 @@ public class SimpleCheckpointsPlugin extends JavaPlugin implements Listener, Com
 	@EventHandler
 	public void onMove(PlayerMoveEvent event){
 		if(world == null || world != event.getPlayer().getWorld()) return;
+		for(PotionEffect effect : event.getPlayer().getActivePotionEffects()){
+			event.getPlayer().removePotionEffect(effect.getType());
+		}
 		if(event.getPlayer().getLocation().clone().add(0, -1, 0).getBlock().getType() != Material.ENCHANTMENT_TABLE) return;
 		UUID uid = event.getPlayer().getUniqueId();
 		Location location = event.getPlayer().getLocation().clone();
