@@ -1,0 +1,18 @@
+name: SimpleCheckpoints
+main: io.github.rypofalem.simplecheckpoints.SimpleCheckpointsPlugin
+version: 1.10-1.0
+website: rypofalem.github.io
+author: RypoFalem
+description: Use an enderpearl to teleport to the last enchantment table you stepped on
+commands:
+  simplecheckpoints:
+    description: 
+    usage: /<command> activate
+    permission: checkpoints.setworld
+permissions:
+  checkpoints.use:
+    description: Use checkpoints.
+    default: true
+  checkpoints.setworld:
+    description: Set world as checkpoint world using /simplecheckpoints activate
+    default: OP
