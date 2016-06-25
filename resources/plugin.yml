@@ -1,6 +1,6 @@
 name: SimpleCheckpoints
 main: io.github.rypofalem.simplecheckpoints.SimpleCheckpointsPlugin
-version: 1.10-1.1
+version: 1.10-1.2
 website: rypofalem.github.io
 author: RypoFalem
 description: Use an enderpearl to teleport to the last enchantment table you stepped on
